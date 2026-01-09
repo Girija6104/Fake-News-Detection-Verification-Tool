@@ -1,0 +1,255 @@
+{% extends &quot;base.html&quot; %}
+{% block title %}Analysis Details - TruthGuard{% endblock %}
+{% block content %}
+&lt;div class=&quot;container mt-4&quot;&gt;
+&lt;div class=&quot;row mb-4&quot;&gt;
+&lt;div class=&quot;col&quot;&gt;
+&lt;nav aria-label=&quot;breadcrumb&quot;&gt;
+&lt;ol class=&quot;breadcrumb&quot;&gt;
+&lt;li class=&quot;breadcrumb-item&quot;&gt;&lt;a href=&quot;/dashboard&quot;&gt;Dashboard&lt;/a&gt;&lt;/li&gt;
+&lt;li class=&quot;breadcrumb-item&quot;&gt;&lt;a href=&quot;/history&quot;&gt;History&lt;/a&gt;&lt;/li&gt;
+&lt;li class=&quot;breadcrumb-item active&quot;&gt;Analysis Details&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/nav&gt;
+&lt;h1&gt;&lt;i class=&quot;fas fa-file-alt&quot;&gt;&lt;/i&gt; Analysis Details&lt;/h1&gt;
+&lt;p class=&quot;text-muted&quot;&gt;ID: {{ analysis.id }} • {{ analysis.created_at.strftime(&#39;%Y-%m-%d
+%H:%M:%S&#39;) }}&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;!-- Main Analysis Card --&gt;
+&lt;div class=&quot;row mb-4&quot;&gt;
+&lt;div class=&quot;col-lg-8&quot;&gt;
+&lt;div class=&quot;card&quot;&gt;
+&lt;div class=&quot;card-header&quot;&gt;
+&lt;h5 class=&quot;mb-0&quot;&gt;Analysis Summary&lt;/h5&gt;
+&lt;/div&gt;
+&lt;div class=&quot;card-body&quot;&gt;
+&lt;div class=&quot;row&quot;&gt;
+&lt;div class=&quot;col-md-8&quot;&gt;
+&lt;h3&gt;
+{% if analysis.classification == &#39;RELIABLE&#39; %}
+&lt;span class=&quot;badge bg-success&quot;&gt;Reliable Content&lt;/span&gt;
+{% elif analysis.classification == &#39;SUSPICIOUS&#39; %}
+&lt;span class=&quot;badge bg-warning&quot;&gt;Suspicious Content&lt;/span&gt;
+{% elif analysis.classification == &#39;FAKE&#39; %}
+&lt;span class=&quot;badge bg-danger&quot;&gt;Fake Content&lt;/span&gt;
+{% else %}
+&lt;span class=&quot;badge bg-secondary&quot;&gt;{{ analysis.classification }}&lt;/span&gt;
+{% endif %}
+&lt;/h3&gt;
+{% if analysis.confidence_score %}
+&lt;div class=&quot;mt-3&quot;&gt;
+&lt;h5&gt;Confidence: {{ (analysis.confidence_score * 100)|round(1) }}%&lt;/h5&gt;
+&lt;div class=&quot;progress&quot; style=&quot;height: 25px;&quot;&gt;
+&lt;div class=&quot;progress-bar
+
+{% if analysis.confidence_score &gt;= 0.7 %}bg-success
+{% elif analysis.confidence_score &gt;= 0.4 %}bg-warning
+{% else %}bg-danger{% endif %}&quot;
+style=&quot;width: {{ analysis.confidence_score * 100 }}%&quot;&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+{% endif %}
+{% if analysis.title %}
+&lt;div class=&quot;mt-3&quot;&gt;
+&lt;h5&gt;Title&lt;/h5&gt;
+&lt;p&gt;{{ analysis.title }}&lt;/p&gt;
+&lt;/div&gt;
+{% endif %}
+{% if analysis.source_url %}
+&lt;div class=&quot;mt-3&quot;&gt;
+&lt;h5&gt;Source URL&lt;/h5&gt;
+&lt;p&gt;&lt;a href=&quot;{{ analysis.source_url }}&quot; target=&quot;_blank&quot;&gt;{{ analysis.source_url
+}}&lt;/a&gt;&lt;/p&gt;
+&lt;/div&gt;
+{% endif %}
+&lt;/div&gt;
+&lt;div class=&quot;col-md-4&quot;&gt;
+&lt;div class=&quot;card&quot;&gt;
+&lt;div class=&quot;card-body text-center&quot;&gt;
+&lt;h5 class=&quot;card-title&quot;&gt;Scores&lt;/h5&gt;
+{% if analysis.credibility_score %}
+&lt;div class=&quot;mb-3&quot;&gt;
+&lt;small class=&quot;text-muted&quot;&gt;Credibility&lt;/small&gt;
+&lt;h3&gt;{{ analysis.credibility_score|round(1) }}/10&lt;/h3&gt;
+&lt;/div&gt;
+{% endif %}
+{% if analysis.sensationalism_score %}
+&lt;div class=&quot;mb-3&quot;&gt;
+&lt;small class=&quot;text-muted&quot;&gt;Sensationalism&lt;/small&gt;
+&lt;h3&gt;{{ analysis.sensationalism_score|round(1) }}/10&lt;/h3&gt;
+&lt;/div&gt;
+{% endif %}
+{% if analysis.sentiment_score %}
+&lt;div class=&quot;mb-3&quot;&gt;
+&lt;small class=&quot;text-muted&quot;&gt;Sentiment&lt;/small&gt;
+&lt;h3&gt;{{ analysis.sentiment_score|round(2) }}&lt;/h3&gt;
+&lt;/div&gt;
+
+{% endif %}
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;col-lg-4&quot;&gt;
+&lt;div class=&quot;card&quot;&gt;
+&lt;div class=&quot;card-header&quot;&gt;
+&lt;h5 class=&quot;mb-0&quot;&gt;Analysis Type&lt;/h5&gt;
+&lt;/div&gt;
+&lt;div class=&quot;card-body text-center&quot;&gt;
+{% if analysis.is_quick_analysis %}
+&lt;div class=&quot;display-1 text-primary&quot;&gt;
+&lt;i class=&quot;fas fa-bolt&quot;&gt;&lt;/i&gt;
+&lt;/div&gt;
+&lt;h4&gt;Quick Analysis&lt;/h4&gt;
+&lt;p class=&quot;text-muted&quot;&gt;Fast analysis completed in under 100ms&lt;/p&gt;
+{% else %}
+&lt;div class=&quot;display-1 text-success&quot;&gt;
+&lt;i class=&quot;fas fa-chart-bar&quot;&gt;&lt;/i&gt;
+&lt;/div&gt;
+&lt;h4&gt;Detailed Analysis&lt;/h4&gt;
+&lt;p class=&quot;text-muted&quot;&gt;Comprehensive analysis with full report&lt;/p&gt;
+{% endif %}
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;!-- Content Preview --&gt;
+&lt;div class=&quot;row mb-4&quot;&gt;
+&lt;div class=&quot;col&quot;&gt;
+&lt;div class=&quot;card&quot;&gt;
+&lt;div class=&quot;card-header&quot;&gt;
+&lt;h5 class=&quot;mb-0&quot;&gt;Content Preview&lt;/h5&gt;
+&lt;/div&gt;
+&lt;div class=&quot;card-body&quot;&gt;
+&lt;div class=&quot;content-preview&quot; style=&quot;max-height: 300px; overflow-y: auto;&quot;&gt;
+{{ analysis.content|safe }}
+&lt;/div&gt;
+&lt;div class=&quot;mt-3&quot;&gt;
+&lt;small class=&quot;text-muted&quot;&gt;{{ analysis.content|length }} characters&lt;/small&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;!-- Key Findings --&gt;
+{% if key_findings %}
+&lt;div class=&quot;row mb-4&quot;&gt;
+&lt;div class=&quot;col&quot;&gt;
+&lt;div class=&quot;card&quot;&gt;
+&lt;div class=&quot;card-header&quot;&gt;
+&lt;h5 class=&quot;mb-0&quot;&gt;&lt;i class=&quot;fas fa-search&quot;&gt;&lt;/i&gt; Key Findings&lt;/h5&gt;
+&lt;/div&gt;
+&lt;div class=&quot;card-body&quot;&gt;
+&lt;div class=&quot;row&quot;&gt;
+{% for finding in key_findings %}
+&lt;div class=&quot;col-md-6 mb-3&quot;&gt;
+&lt;div class=&quot;card h-100 border-{{ finding.type }}&quot;&gt;
+&lt;div class=&quot;card-body&quot;&gt;
+&lt;div class=&quot;d-flex align-items-center mb-2&quot;&gt;
+&lt;span class=&quot;display-6 me-3&quot;&gt;{{ finding.icon }}&lt;/span&gt;
+&lt;h5 class=&quot;card-title mb-0&quot;&gt;{{ finding.title }}&lt;/h5&gt;
+&lt;/div&gt;
+&lt;p class=&quot;card-text&quot;&gt;{{ finding.description }}&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+{% endfor %}
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+{% endif %}
+&lt;!-- Recommendations &amp; Fact Checks --&gt;
+{% if analysis_type == &#39;detailed&#39; %}
+&lt;div class=&quot;row&quot;&gt;
+{% if recommendations %}
+&lt;div class=&quot;col-lg-6 mb-4&quot;&gt;
+&lt;div class=&quot;card&quot;&gt;
+&lt;div class=&quot;card-header bg-info text-white&quot;&gt;
+&lt;h5 class=&quot;mb-0&quot;&gt;&lt;i class=&quot;fas fa-lightbulb&quot;&gt;&lt;/i&gt; Recommendations&lt;/h5&gt;
+&lt;/div&gt;
+&lt;div class=&quot;card-body&quot;&gt;
+&lt;ul class=&quot;list-group list-group-flush&quot;&gt;
+{% for recommendation in recommendations %}
+&lt;li class=&quot;list-group-item&quot;&gt;
+&lt;i class=&quot;fas fa-check-circle text-success me-2&quot;&gt;&lt;/i&gt;
+
+{{ recommendation }}
+&lt;/li&gt;
+{% endfor %}
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+{% endif %}
+{% if fact_checks %}
+&lt;div class=&quot;col-lg-6 mb-4&quot;&gt;
+&lt;div class=&quot;card&quot;&gt;
+&lt;div class=&quot;card-header bg-warning text-white&quot;&gt;
+&lt;h5 class=&quot;mb-0&quot;&gt;&lt;i class=&quot;fas fa-clipboard-check&quot;&gt;&lt;/i&gt; Fact Checks&lt;/h5&gt;
+&lt;/div&gt;
+&lt;div class=&quot;card-body&quot;&gt;
+&lt;div class=&quot;table-responsive&quot;&gt;
+&lt;table class=&quot;table table-sm&quot;&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Claim&lt;/th&gt;
+&lt;th&gt;Status&lt;/th&gt;
+&lt;th&gt;Details&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+{% for check in fact_checks %}
+&lt;tr&gt;
+&lt;td&gt;{{ check.claim }}&lt;/td&gt;
+&lt;td&gt;
+{% if check.status == &#39;GOOD&#39; or check.status == &#39;LOW&#39; or check.status ==
+&#39;BALANCED&#39; %}
+&lt;span class=&quot;badge bg-success&quot;&gt;{{ check.status }}&lt;/span&gt;
+{% elif check.status == &#39;POOR&#39; or check.status == &#39;HIGH&#39; or check.status ==
+&#39;BIASED&#39; %}
+&lt;span class=&quot;badge bg-danger&quot;&gt;{{ check.status }}&lt;/span&gt;
+{% else %}
+&lt;span class=&quot;badge bg-warning&quot;&gt;{{ check.status }}&lt;/span&gt;
+{% endif %}
+&lt;/td&gt;
+&lt;td&gt;{{ check.details }}&lt;/td&gt;
+&lt;/tr&gt;
+{% endfor %}
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;/div&gt;
+{% endif %}
+&lt;/div&gt;
+{% endif %}
+&lt;!-- Actions --&gt;
+&lt;div class=&quot;row mt-4&quot;&gt;
+&lt;div class=&quot;col&quot;&gt;
+&lt;div class=&quot;card&quot;&gt;
+&lt;div class=&quot;card-body text-center&quot;&gt;
+&lt;a href=&quot;/analyze&quot; class=&quot;btn btn-primary me-3&quot;&gt;
+&lt;i class=&quot;fas fa-bolt&quot;&gt;&lt;/i&gt; New Analysis
+&lt;/a&gt;
+&lt;a href=&quot;/history&quot; class=&quot;btn btn-outline-secondary me-3&quot;&gt;
+&lt;i class=&quot;fas fa-history&quot;&gt;&lt;/i&gt; Back to History
+&lt;/a&gt;
+&lt;button onclick=&quot;window.print()&quot; class=&quot;btn btn-outline-primary&quot;&gt;
+&lt;i class=&quot;fas fa-print&quot;&gt;&lt;/i&gt; Print Report
+&lt;/button&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+{% endblock %}
